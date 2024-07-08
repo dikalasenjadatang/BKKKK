@@ -1,0 +1,76 @@
+<div class="row">
+  <div class="col-xs-12">
+    <!-- /.box -->
+    <div class="box">
+      <div class="box-header">
+        <div class="box-header">
+          <h1 class="box-title">Arsip Pelanggaran Siswa</h1>
+        </div>
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body">
+        <div class="box-tools pull-left">
+          <form action="" class="">
+            <div class="form-group">
+              <select id="id_siswa" data-placeholder="Pilih Data Yang Akan Dilihat" class="form-control input-xs select2" style="width: 100%;">
+                <option value=""></option>
+                <?php foreach ($siswa as $row): ?>
+                  <option value="<?= $row->id_user ?>"><?= $row->nama_siswa ?></option>
+                <?php endforeach ?>
+              </select>
+            </div>
+          </form>
+        </div>
+        <table class="table table-bordered table-responsive table-striped">
+          <thead>
+            <tr>
+              <th width="5%">#</th>
+              <th width="40%">Pelanggaran</th>
+              <th width="35%"><i class="fa fa-clock-o"></i></th>
+              <th width="25%">Level</th>
+            </tr>
+          </thead>
+          <tbody id="pelanggaran">
+
+          </tbody>
+        </table>
+      </div>
+            <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+  </div>
+        <!-- /.col -->
+</div>
+
+<script>
+  $(document).on('change', '#id_siswa', function() {
+    var id_siswa = $(this).val();
+    $.ajax({
+        url:"<?= base_url('ortu/datapelanggaran') ?>",
+        method:"POST",
+        data:{id_siswa:id_siswa},
+        dataType:"json",
+        success:function(data){
+          $('#detail').modal("show");
+          if (data.status == false) {
+           $('#pelanggaran').html('');
+          }else{
+            $('.pelanggaran').removeClass('hidden');
+            $('.alert').addClass('hidden');
+            var baris = '';
+            var no = 1;
+            for (var i = 0; i < data.length; i++) {
+              baris += '<tr>' +
+                          '<td>' + no + '</td>' +
+                          '<td>' + data[i].deskripsi_pelanggaran + '</td>' +
+                          '<td>' + data[i].tanggal + '</td>' +
+                          '<td>' + data[i].level + '</td>' +
+                        '</tr>'; 
+                        no++;
+            }
+            $('#pelanggaran').html(baris);
+          }
+        }
+      })
+  });
+</script>
